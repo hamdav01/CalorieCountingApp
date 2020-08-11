@@ -1,22 +1,25 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Table from './components/item/Table';
-
+import shortid from 'shortid';
 const data = [
   {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+    id: shortid.generate(),
     name: 'Chicken',
     kcal: 200,
+    grams: 20,
   },
   {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+    id: shortid.generate(),
     name: 'Sallad',
     kcal: 20,
+    grams: 60,
   },
   {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
+    id: shortid.generate(),
     name: 'Potatoes',
-    kcal: 100,
+    kcal: 110,
+    grams: 100,
   },
 ];
 export default function KcalSection() {
@@ -28,5 +31,7 @@ export default function KcalSection() {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: 'blue',
+  },
 });
