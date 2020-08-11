@@ -1,31 +1,36 @@
 import { StyleSheet, View, Text } from 'react-native';
 import React from 'react';
+import shortid from 'shortid';
+import { map } from 'ramda';
+
+const lineContent = ['Name', 'Kcal', 'g', 'TotalKcal'];
+const Line = (value) => (
+  <Text key={shortid.generate()} style={styles.rowItem}>
+    {value}
+  </Text>
+);
+const generateLines = map(Line);
 
 const HeaderRow = () => {
   return (
-    <View style={styles.row}>
-      <View style={styles.test}>
-        <Text style={styles.item}>Name</Text>
-        <Text style={styles.item}>Kcal</Text>
-        <Text style={styles.item}>g</Text>
-        <Text style={styles.item}>TotalKcal</Text>
-      </View>
+    <View style={styles.content}>
+      <View style={styles.row}>{generateLines(lineContent)}</View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  item: {
+  rowItem: {
     fontWeight: 'bold',
     flex: 0.25,
     textAlign: 'center',
     textAlignVertical: 'center',
   },
-  test: {
+  row: {
     flexDirection: 'row',
     flex: 0.75,
   },
-  row: {
+  content: {
     flexDirection: 'row',
     marginHorizontal: 5,
     borderBottomWidth: 2,

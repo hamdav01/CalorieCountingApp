@@ -7,9 +7,11 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Entypo, Ionicons } from '@expo/vector-icons';
+import { multiply } from 'ramda';
 const Row = ({ name, onDelete, id, kcal, grams }) => {
   const [currentKcal, setKcal] = useState(kcal);
   const [currentGrams, setGrams] = useState(grams);
+  const totalKcal = multiply(currentKcal, currentGrams);
   return (
     <View style={styles.row}>
       <View style={styles.information}>
@@ -24,7 +26,7 @@ const Row = ({ name, onDelete, id, kcal, grams }) => {
           onChangeText={setGrams}
           value={currentGrams.toString()}
         />
-        <Text style={styles.rowItem}>{currentKcal * currentGrams}</Text>
+        <Text style={styles.rowItem}>{totalKcal}</Text>
       </View>
       <View style={styles.button}>
         <TouchableWithoutFeedback
@@ -45,6 +47,7 @@ const Row = ({ name, onDelete, id, kcal, grams }) => {
 const styles = StyleSheet.create({
   row: {
     marginHorizontal: 5,
+    marginVertical: 5,
     flexDirection: 'row',
   },
   rowItem: {

@@ -5,7 +5,6 @@ import {
   FlatList,
   StyleSheet,
   TouchableWithoutFeedback,
-  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -86,8 +85,8 @@ const Table = ({ data }) => {
   const renderRow = createRenderRow(setData, currentData);
   return (
     <View style={styles.content}>
-      <HeaderRow />
       <View style={styles.listArea}>
+        <HeaderRow />
         <FlatList
           data={currentData}
           renderItem={renderRow}
