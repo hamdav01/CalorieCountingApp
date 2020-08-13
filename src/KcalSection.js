@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, StatusBar } from 'react-native';
 import Table from './components/item/Table';
 import shortid from 'shortid';
+import Header from './components/header/Header.js';
+
 const data = [
   {
     id: shortid.generate(),
@@ -25,13 +27,12 @@ const data = [
 export default function KcalSection() {
   return (
     <View style={styles.container}>
+      <Header text={'Kcal Calculator'} />
       <Table data={data} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'blue',
-  },
+  container: { marginTop: StatusBar.currentHeight || 0 },
 });

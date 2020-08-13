@@ -20,6 +20,9 @@ import {
   slice,
   findIndex,
   sum,
+  divide,
+  __,
+  clamp,
 } from 'ramda';
 import shortid from 'shortid';
 import HeaderRow from './HeaderRow';
@@ -32,7 +35,10 @@ const getGrams = prop('grams');
 const getKcal = prop('kcal');
 const getId = prop('id');
 
-const multiplyGramsAndKcal = converge(multiply, [getGrams, getKcal]);
+const multiplyGramsAndKcal = converge(multiply, [
+  compose(divide(__, 100), getGrams),
+  getKcal,
+]);
 const mapTotalKcal = map(multiplyGramsAndKcal);
 const getTotalKcal = compose(sum, mapTotalKcal);
 
@@ -85,7 +91,7 @@ const Table = ({ data }) => {
       ])
     );
   };
-
+  const totalKcal = getTotalKcal(currentData);
   return (
     <View style={styles.content}>
       <View style={styles.listArea}>
@@ -97,9 +103,7 @@ const Table = ({ data }) => {
         />
       </View>
       <View style={styles.nonListArea}>
-        <Text style={styles.textArea}>{`TotalKcal: ${getTotalKcal(
-          currentData
-        )}`}</Text>
+        <Text style={styles.text}>{`TotalKcal: ${totalKcal}`}</Text>
         <TouchableWithoutFeedback
           style={styles.buttonArea}
           size={120}
@@ -112,13 +116,25 @@ const Table = ({ data }) => {
   );
 };
 
+const colorClamp = clamp(0, 255);
+// 0-600 grönt 600-900 gult 900-max rött
+
+const test = (value) => {
+  const max = 255;
+  let green = colorClamp(max + 600 - value);
+  let red = colorClamp((max / 600) * value);
+  const blue = 0;
+  console.log('value:', value);
+  console.log(`rgb(${red},${green},${blue})`);
+  return `rgb(${red},${green},${blue})`;
+};
+
 const getHalfWindowHeight = compose(divideByTwo, getWindowHeight);
 
 const styles = StyleSheet.create({
   content: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    flex: 1,
   },
   listArea: {
     alignSelf: 'stretch',
@@ -129,8 +145,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: getHalfWindowHeight(),
   },
-  textArea: {
+  text: {
     fontSize: 26,
+    fontWeight: 'bold',
     textAlignVertical: 'center',
     flex: 0.5,
   },

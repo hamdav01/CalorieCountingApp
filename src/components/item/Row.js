@@ -17,30 +17,41 @@ const RowInputItem = ({ value, onChangeText }) => (
   />
 );
 
-const createOnChange = (prop, data) => set(lensProp(prop), __, data);
-
 const Row = ({ name, onDelete, id, kcal, grams, onChange }) => {
+  console.log('render ROw');
   const totalKcal = multiply(kcal, grams);
   const data = { kcal, id, name, grams };
-  const onKcalChange = createOnChange('kcal', data);
-  const onNameChange = createOnChange('name', data);
-  const onGramsChange = createOnChange('grams', data);
+  const onKcalChange = (value) => {
+    onChange({ name, grams, kcal: value, id });
+  };
+  const onNameChange = (value) => {
+    onChange({ name: value, grams, kcal, id });
+  };
+  const onGramsChange = (value) => {
+    onChange({ name, grams: value, kcal, id });
+  };
+
+  //  onChange(set(lensProp('kcal'), +value, data));
+  // const onNameChange = (value) => onChange(set(lensProp('name'), +value, data));
+  // const onGramsChange = (value) =>
+  //  onChange(set(lensProp('grams'), value, data));
+
   return (
     <View style={styles.content}>
       <View style={styles.row}>
         <TextInput
-          style={styles.rowItem}
           onChangeText={onNameChange}
+          style={styles.rowItem}
           value={name}
         />
         <TextInput
-          style={styles.rowItem}
           onChangeText={onKcalChange}
+          style={styles.rowItem}
           value={toString(kcal)}
         />
         <TextInput
-          style={styles.rowItem}
           onChangeText={onGramsChange}
+          style={styles.rowItem}
           value={toString(grams)}
         />
         <Text style={styles.rowItem}>{totalKcal}</Text>
