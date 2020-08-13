@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    flex: 0.75,
+    flex: 0.85,
   },
   content: {
     flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,36 +6,46 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { Entypo, Ionicons } from '@expo/vector-icons';
-import { multiply } from 'ramda';
-const Row = ({ name, onDelete, id, kcal, grams }) => {
-  const [currentKcal, setKcal] = useState(kcal);
-  const [currentGrams, setGrams] = useState(grams);
-  const totalKcal = multiply(currentKcal, currentGrams);
+import { Entypo } from '@expo/vector-icons';
+import { multiply, toString, lensProp, set, __ } from 'ramda';
+
+const RowInputItem = ({ value, onChangeText }) => (
+  <TextInput
+    style={styles.rowItem}
+    onChangeText={onChangeText}
+    value={toString(value)}
+  />
+);
+
+const createOnChange = (prop, data) => set(lensProp(prop), __, data);
+
+const Row = ({ name, onDelete, id, kcal, grams, onChange }) => {
+  const totalKcal = multiply(kcal, grams);
+  const data = { kcal, id, name, grams };
+  const onKcalChange = createOnChange('kcal', data);
+  const onNameChange = createOnChange('name', data);
+  const onGramsChange = createOnChange('grams', data);
   return (
-    <View style={styles.row}>
-      <View style={styles.information}>
-        <Text style={styles.rowItem}>{name}</Text>
+    <View style={styles.content}>
+      <View style={styles.row}>
         <TextInput
           style={styles.rowItem}
-          onChangeText={setKcal}
-          value={currentKcal.toString()}
+          onChangeText={onNameChange}
+          value={name}
         />
         <TextInput
           style={styles.rowItem}
-          onChangeText={setGrams}
-          value={currentGrams.toString()}
+          onChangeText={onKcalChange}
+          value={toString(kcal)}
+        />
+        <TextInput
+          style={styles.rowItem}
+          onChangeText={onGramsChange}
+          value={toString(grams)}
         />
         <Text style={styles.rowItem}>{totalKcal}</Text>
       </View>
-      <View style={styles.button}>
-        <TouchableWithoutFeedback
-          onPress={() =>
-            onSave({ id, name, kcal: currentKcal, grams: currentGrams })
-          }
-        >
-          <Ionicons name='ios-checkmark-circle' size={26} color='black' />
-        </TouchableWithoutFeedback>
+      <View style={styles.buttonArea}>
         <TouchableWithoutFeedback onPress={() => onDelete(id)}>
           <Entypo name='trash' size={26} color='black' />
         </TouchableWithoutFeedback>
@@ -45,7 +55,7 @@ const Row = ({ name, onDelete, id, kcal, grams }) => {
 };
 
 const styles = StyleSheet.create({
-  row: {
+  content: {
     marginHorizontal: 5,
     marginVertical: 5,
     flexDirection: 'row',
@@ -55,15 +65,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
   },
-  information: {
-    marginHorizontal: 5,
+  row: {
     flexDirection: 'row',
-    flex: 0.75,
+    flex: 0.85,
   },
-  button: {
+  buttonArea: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    flex: 0.25,
+    flex: 0.15,
   },
 });
 

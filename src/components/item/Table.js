@@ -10,70 +10,59 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   equals,
   compose,
-  reduce,
   filter,
-  not,
   concat,
-  add,
   prop,
-  curry,
   map,
   multiply,
   converge,
+  inc,
+  slice,
+  findIndex,
+  sum,
 } from 'ramda';
 import shortid from 'shortid';
 import HeaderRow from './HeaderRow';
 import Row from './Row';
 import { getWindowHeight } from '../../utils/Dimensions';
 import { divideByTwo } from '../../utils/Math';
-
-const createOnDelete = curry((setData, data, idToDelete) =>
-  setData(filter(({ id }) => isNotEqual(id, idToDelete), data))
-);
-
-const createOnAdd = (setData, data) => () =>
-  setData(
-    concat(data, [
-      {
-        name: 'Undefined',
-        kcal: 0,
-        grams: 0,
-        id: shortid.generate(),
-      },
-    ])
-  );
+import { isNotEqual } from '../../utils/Boolean';
 
 const getGrams = prop('grams');
 const getKcal = prop('kcal');
+const getId = prop('id');
+
 const multiplyGramsAndKcal = converge(multiply, [getGrams, getKcal]);
 const mapTotalKcal = map(multiplyGramsAndKcal);
-const getTotalKcal = compose(reduce(add, 0), mapTotalKcal);
-const isNotEqual = compose(not, equals);
+const getTotalKcal = compose(sum, mapTotalKcal);
 
 const createRenderRow = (setData, data) => {
-  const onDelete = createOnDelete(setData, data);
-  const onSave = (setData, data) => {
-    (item) => {
-      const { name, grams, kcal, id } = item;
-      const dataToSave = data.filter(({ id: currentId }) => id !== currentId);
-      setData([
-        ...dataToSave,
-        {
-          name,
-          grams,
-          kcal,
-          id,
-        },
-      ]);
-    };
+  const onDelete = (id) => {
+    const isNotEqualToId = compose(isNotEqual(id), getId);
+    setData(filter(isNotEqualToId, data));
   };
-  return ({ item }) => (
+
+  const onChange = ({ name, grams, kcal, id }) => {
+    const equalsId = compose(equals(id), getId);
+    const index = findIndex(equalsId, data);
+    setData([
+      ...slice(0, index, data),
+      {
+        name,
+        grams,
+        kcal,
+        id,
+      },
+      ...slice(inc(index), data.length, data),
+    ]);
+  };
+  return ({ item: { id, name, kcal, grams } }) => (
     <Row
-      id={item.id}
-      name={item.name}
-      kcal={item.kcal}
-      onSave={onSave}
-      grams={item.grams}
+      id={id}
+      name={name}
+      kcal={kcal}
+      grams={grams}
+      onChange={onChange}
       onDelete={onDelete}
     />
   );
@@ -81,8 +70,22 @@ const createRenderRow = (setData, data) => {
 
 const Table = ({ data }) => {
   const [currentData, setData] = useState(data);
-  const onAdd = createOnAdd(setData, currentData);
   const renderRow = createRenderRow(setData, currentData);
+
+  const onAdd = () => {
+    console.log('onAdd');
+    setData(
+      concat(currentData, [
+        {
+          name: 'Undefined',
+          kcal: 0,
+          grams: 0,
+          id: shortid.generate(),
+        },
+      ])
+    );
+  };
+
   return (
     <View style={styles.content}>
       <View style={styles.listArea}>
@@ -90,7 +93,7 @@ const Table = ({ data }) => {
         <FlatList
           data={currentData}
           renderItem={renderRow}
-          keyExtractor={(item) => item.id}
+          keyExtractor={getId}
         />
       </View>
       <View style={styles.nonListArea}>
