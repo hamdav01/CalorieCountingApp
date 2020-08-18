@@ -50,6 +50,7 @@ const createRenderRow = (setData, data) => {
 
   const onChange = ({ name, grams, kcal, id }) => {
     const equalsId = compose(equals(id), getId);
+
     const index = findIndex(equalsId, data);
     setData([
       ...slice(0, index, data),

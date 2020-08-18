@@ -4,13 +4,13 @@ import shortid from 'shortid';
 import { map } from 'ramda';
 
 const lineContent = ['Name', 'Kcal', 'g', 'TotalKcal'];
+
 const Line = (value) => (
   <Text key={shortid.generate()} style={styles.rowItem}>
     {value}
   </Text>
 );
 const generateLines = map(Line);
-
 const HeaderRow = () => {
   return (
     <View style={styles.content}>

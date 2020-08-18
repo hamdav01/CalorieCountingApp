@@ -7,54 +7,46 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { multiply, toString, lensProp, set, __ } from 'ramda';
+import { multiply, compose, lensProp, set, curry, not, divide } from 'ramda';
 
 const RowInputItem = ({ value, onChangeText }) => (
   <TextInput
     style={styles.rowItem}
     onChangeText={onChangeText}
-    value={toString(value)}
+    value={value.toString()}
   />
 );
 
+const creatOnChangeValue = curry((data, name, value) =>
+  set(lensProp(name), value, data)
+);
+
+const isNumber = compose(not, isNaN);
+
 const Row = ({ name, onDelete, id, kcal, grams, onChange }) => {
-  console.log('render ROw');
-  const totalKcal = multiply(kcal, grams);
+  const totalKcal = multiply(divide(kcal, 100), grams);
   const data = { kcal, id, name, grams };
-  const onKcalChange = (value) => {
-    onChange({ name, grams, kcal: value, id });
-  };
-  const onNameChange = (value) => {
-    onChange({ name: value, grams, kcal, id });
-  };
-  const onGramsChange = (value) => {
-    onChange({ name, grams: value, kcal, id });
+  const onChangeValue = creatOnChangeValue(data);
+  const onKcalChange = (value, s) => {
+    console.log('value: ', value);
+    if (isNumber(value)) {
+      console.log('IsNumber: ', value, onChangeValue('kcal', value));
+      onChange(onChangeValue('kcal', value));
+    } else {
+      console.log('Is NOT Number: ', kcal, onChangeValue('kcal', kcal));
+      onChange(onChangeValue('kcal', kcal));
+    }
   };
 
-  //  onChange(set(lensProp('kcal'), +value, data));
-  // const onNameChange = (value) => onChange(set(lensProp('name'), +value, data));
-  // const onGramsChange = (value) =>
-  //  onChange(set(lensProp('grams'), value, data));
-
+  const onNameChange = (value) => onChange(onChangeValue('name', value));
+  const onGramsChange = (value) => onChange(onChangeValue('grams', value));
   return (
     <View style={styles.content}>
       <View style={styles.row}>
-        <TextInput
-          onChangeText={onNameChange}
-          style={styles.rowItem}
-          value={name}
-        />
-        <TextInput
-          onChangeText={onKcalChange}
-          style={styles.rowItem}
-          value={toString(kcal)}
-        />
-        <TextInput
-          onChangeText={onGramsChange}
-          style={styles.rowItem}
-          value={toString(grams)}
-        />
-        <Text style={styles.rowItem}>{totalKcal}</Text>
+        <RowInputItem onChangeText={onNameChange} value={name} />
+        <RowInputItem onChangeText={onKcalChange} value={kcal} />
+        <RowInputItem onChangeText={onGramsChange} value={grams} />
+        <Text style={styles.rowItem}>{totalKcal.toFixed(0)}</Text>
       </View>
       <View style={styles.buttonArea}>
         <TouchableWithoutFeedback onPress={() => onDelete(id)}>
