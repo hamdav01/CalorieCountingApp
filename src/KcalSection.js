@@ -24,6 +24,7 @@ const data = [
     grams: 100,
   },
 ];
+
 export default function KcalSection() {
   return (
     <View style={styles.container}>

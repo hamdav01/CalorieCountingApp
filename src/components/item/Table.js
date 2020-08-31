@@ -104,7 +104,7 @@ const Table = ({ data }) => {
         />
       </View>
       <View style={styles.nonListArea}>
-        <Text style={styles.text}>{`TotalKcal: ${totalKcal}`}</Text>
+        <Text style={styles.text}>{`TotalKcal: ${totalKcal.toFixed(2)}`}</Text>
         <TouchableWithoutFeedback
           style={styles.buttonArea}
           size={120}

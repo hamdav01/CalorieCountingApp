@@ -11,6 +11,7 @@ const Line = (value) => (
   </Text>
 );
 const generateLines = map(Line);
+
 const HeaderRow = () => {
   return (
     <View style={styles.content}>
