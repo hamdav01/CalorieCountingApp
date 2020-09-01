@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 import { isNotEqual } from '../../utils/Boolean';
-import { identity, compose } from 'ramda';
+import { identity } from 'ramda';
 
 const RowInputItem = ({ value, onSubmitEditing, filter = identity }) => {
   const [currentValue, onChangeValue] = React.useState(value.toString());

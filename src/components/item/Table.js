@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import {
   View,
   Text,
@@ -8,28 +8,22 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  equals,
   compose,
-  filter,
-  concat,
   prop,
   map,
   multiply,
   converge,
-  inc,
-  slice,
-  findIndex,
   sum,
   divide,
   __,
   clamp,
 } from 'ramda';
-import shortid from 'shortid';
+
 import HeaderRow from './HeaderRow';
 import Row from './Row';
 import { getWindowHeight } from '../../utils/Dimensions';
 import { divideByTwo } from '../../utils/Math';
-import { isNotEqual } from '../../utils/Boolean';
+import { productReducer, ProductActions } from '../../reducers/ProductReducer';
 
 const getGrams = prop('grams');
 const getKcal = prop('kcal');
@@ -42,27 +36,19 @@ const multiplyGramsAndKcal = converge(multiply, [
 const mapTotalKcal = map(multiplyGramsAndKcal);
 const getTotalKcal = compose(sum, mapTotalKcal);
 
-const createRenderRow = (setData, data) => {
-  const onDelete = (id) => {
-    const isNotEqualToId = compose(isNotEqual(id), getId);
-    setData(filter(isNotEqualToId, data));
-  };
+const createRenderRow = (dispatchData) => {
+  const onDelete = (id) =>
+    dispatchData({
+      id,
+      type: ProductActions.REMOVE,
+    });
 
-  const onChange = ({ name, grams, kcal, id }) => {
-    const equalsId = compose(equals(id), getId);
+  const onChange = (config) =>
+    dispatchData({
+      type: ProductActions.UPDATE,
+      ...config,
+    });
 
-    const index = findIndex(equalsId, data);
-    setData([
-      ...slice(0, index, data),
-      {
-        name,
-        grams,
-        kcal,
-        id,
-      },
-      ...slice(inc(index), data.length, data),
-    ]);
-  };
   return ({ item: { id, name, kcal, grams } }) => (
     <Row
       id={id}
@@ -76,22 +62,13 @@ const createRenderRow = (setData, data) => {
 };
 
 const Table = ({ data }) => {
-  const [currentData, setData] = useState(data);
-  const renderRow = createRenderRow(setData, currentData);
+  const [currentData, dispatchData] = useReducer(productReducer, data);
+  const renderRow = createRenderRow(dispatchData);
+  const onAdd = () =>
+    dispatchData({
+      type: ProductActions.ADD,
+    });
 
-  const onAdd = () => {
-    console.log('onAdd');
-    setData(
-      concat(currentData, [
-        {
-          name: 'Undefined',
-          kcal: 0,
-          grams: 0,
-          id: shortid.generate(),
-        },
-      ])
-    );
-  };
   const totalKcal = getTotalKcal(currentData);
   return (
     <View style={styles.content}>

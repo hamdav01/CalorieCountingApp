@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { multiply, lensProp, set, curry, compose, replace } from 'ramda';
+import { multiply, lensProp, set, curry, compose } from 'ramda';
 import { divideByHundred } from '../../utils/Math';
 import RowInputItem from './RowInputItem';
 import { keepAllNumbers } from '../../utils/Regex';
@@ -12,6 +12,14 @@ const creatOnChangeValue = curry((data, name, value) =>
 
 const Row = ({ name, onDelete, id, kcal, grams, onChange }) => {
   const totalKcal = multiply(divideByHundred(kcal), grams);
+  console.log(
+    'totalKcal: ',
+    name,
+    totalKcal,
+    kcal,
+    divideByHundred(kcal),
+    grams
+  );
   const data = { kcal, id, name, grams };
   const onChangeValue = (type) =>
     compose(onChange, creatOnChangeValue(data, type));
