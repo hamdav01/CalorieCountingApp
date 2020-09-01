@@ -7,7 +7,9 @@ const RowInputItem = ({ value, onSubmitEditing, filter = identity }) => {
   const [currentValue, onChangeValue] = React.useState(value.toString());
   const onBlur = () => {
     if (isNotEqual(currentValue, value)) {
-      onSubmitEditing(filter(currentValue));
+      const updatedValue = filter(currentValue);
+      onSubmitEditing(updatedValue);
+      onChangeValue(updatedValue);
     }
   };
   return (

@@ -5,7 +5,6 @@ import { multiply, lensProp, set, curry, compose, replace } from 'ramda';
 import { divideByHundred } from '../../utils/Math';
 import RowInputItem from './RowInputItem';
 import { keepAllNumbers } from '../../utils/Regex';
-import { isNumber } from '../../utils/Boolean';
 
 const creatOnChangeValue = curry((data, name, value) =>
   set(lensProp(name), value, data)
