@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { multiply, lensProp, set, curry, compose } from 'ramda';
+import { multiply, lensProp, set, curry, compose, replace } from 'ramda';
 import { divideByHundred } from '../../utils/Math';
 import RowInputItem from './RowInputItem';
 import { keepAllNumbers } from '../../utils/Regex';
+import { isNumber } from '../../utils/Boolean';
 
 const creatOnChangeValue = curry((data, name, value) =>
   set(lensProp(name), value, data)
@@ -19,7 +20,6 @@ const Row = ({ name, onDelete, id, kcal, grams, onChange }) => {
   const onKcalChange = onChangeValue('kcal');
   const onGramsChange = onChangeValue('grams');
   const onNameChange = onChangeValue('name');
-  
   return (
     <View style={styles.content}>
       <View style={styles.row}>
