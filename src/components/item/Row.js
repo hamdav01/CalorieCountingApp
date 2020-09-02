@@ -12,14 +12,7 @@ const creatOnChangeValue = curry((data, name, value) =>
 
 const Row = ({ name, onDelete, id, kcal, grams, onChange }) => {
   const totalKcal = multiply(divideByHundred(kcal), grams);
-  console.log(
-    'totalKcal: ',
-    name,
-    totalKcal,
-    kcal,
-    divideByHundred(kcal),
-    grams
-  );
+
   const data = { kcal, id, name, grams };
   const onChangeValue = (type) =>
     compose(onChange, creatOnChangeValue(data, type));
