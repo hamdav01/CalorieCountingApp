@@ -22,7 +22,7 @@ import {
 import HeaderRow from './HeaderRow';
 import Row from './Row';
 import { getWindowHeight } from '../../utils/Dimensions';
-import { divideByTwo } from '../../utils/Math';
+import { divideByTwo, divideByHundred } from '../../utils/Math';
 import { productReducer, ProductActions } from '../../reducers/ProductReducer';
 
 const getGrams = prop('grams');
@@ -30,7 +30,7 @@ const getKcal = prop('kcal');
 const getId = prop('id');
 
 const multiplyGramsAndKcal = converge(multiply, [
-  compose(divide(__, 100), getGrams),
+  compose(divideByHundred, getGrams),
   getKcal,
 ]);
 const mapTotalKcal = map(multiplyGramsAndKcal);
@@ -43,10 +43,10 @@ const createRenderRow = (dispatchData) => {
       type: ProductActions.REMOVE,
     });
 
-  const onChange = (config) =>
+  const onChange = (data) =>
     dispatchData({
+      data,
       type: ProductActions.UPDATE,
-      ...config,
     });
 
   return ({ item: { id, name, kcal, grams } }) => (
@@ -61,24 +61,19 @@ const createRenderRow = (dispatchData) => {
   );
 };
 
-const Table = ({ data }) => {
-  const [currentData, dispatchData] = useReducer(productReducer, data);
+const Table = ({ data, dispatchData }) => {
   const renderRow = createRenderRow(dispatchData);
   const onAdd = () =>
     dispatchData({
       type: ProductActions.ADD,
     });
 
-  const totalKcal = getTotalKcal(currentData);
+  const totalKcal = getTotalKcal(data);
   return (
     <View style={styles.content}>
       <View style={styles.listArea}>
         <HeaderRow />
-        <FlatList
-          data={currentData}
-          renderItem={renderRow}
-          keyExtractor={getId}
-        />
+        <FlatList data={data} renderItem={renderRow} keyExtractor={getId} />
       </View>
       <View style={styles.nonListArea}>
         <Text style={styles.text}>{`TotalKcal: ${totalKcal.toFixed(2)}`}</Text>

@@ -1,58 +1,38 @@
-import {
-  concat,
-  prop,
-  compose,
-  findIndex,
-  equals,
-  filter,
-  slice,
-  length,
-  inc,
-} from 'ramda';
-import { isNotEqual } from '../utils/Boolean';
+import { concat, findIndex, remove, eqProps, update, append } from 'ramda';
 import shortid from 'shortid';
 
 export const ProductActions = {
   ADD: 'addProduct',
   REMOVE: 'removeProduct',
   UPDATE: 'updateProduct',
+  INIT: 'initProducts',
 };
 
-const generateTemplateProduct = () => [
-  {
-    name: 'Undefined',
-    kcal: 0,
-    grams: 0,
-    id: shortid.generate(),
-  },
-];
-
-const getId = prop('id');
+const generateTemplateProduct = () => ({
+  name: 'Undefined',
+  kcal: 0,
+  grams: 0,
+  id: shortid.generate(),
+});
 
 export const productReducer = (state, action) => {
   switch (action.type) {
+    case ProductActions.INIT: {
+      return action.data;
+    }
     case ProductActions.ADD: {
-      return concat(state, generateTemplateProduct());
+      return append(generateTemplateProduct(), state);
     }
     case ProductActions.REMOVE: {
-      const { id } = action;
-      const isNotEqualToId = compose(isNotEqual(id), getId);
-      return filter(isNotEqualToId, state);
+      const equalsId = eqProps('id', action);
+      const index = findIndex(equalsId, state);
+      return remove(index, 1, state);
     }
     case ProductActions.UPDATE: {
-      const { name, grams, kcal, id } = action;
-      const equalsId = compose(equals(id), getId);
+      const { data } = action;
+      const equalsId = eqProps('id', data);
       const index = findIndex(equalsId, state);
-      return [
-        ...slice(0, index, state),
-        {
-          name,
-          grams,
-          kcal,
-          id,
-        },
-        ...slice(inc(index), length(state), state),
-      ];
+      return update(index, data, state);
     }
     default:
       throw new Error('No Producer actions exists for this');

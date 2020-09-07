@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,8 +10,11 @@ import shortid from 'shortid';
 import Header from './components/header/Header.js';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import { AntDesign } from '@expo/vector-icons';
+import { productReducer, ProductActions } from './reducers/ProductReducer';
+import { compose, map, andThen } from 'ramda';
 
-const data = [
+const initData = [
   {
     id: shortid.generate(),
     name: 'Chicken',
@@ -32,30 +35,36 @@ const data = [
   },
 ];
 
-const getAllData = () => {
-  AsyncStorage.getAllKeys().then((keys) => {
-    return AsyncStorage.multiGet(keys)
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  });
+const getAndParseItem = compose(andThen(JSON.parse), AsyncStorage.getItem);
+const mapGetAndParseItem = map(getAndParseItem);
+
+const useAsynchStorage = () => {
+  const [currentData, dispatchData] = useReducer(productReducer, initData);
+  useEffect(() => {
+    const getData = async () => {
+      const keys = await AsyncStorage.getAllKeys();
+      const data = await Promise.all(mapGetAndParseItem(keys));
+      dispatchData({ type: ProductActions.INIT, data });
+    };
+    getData();
+  }, []);
+  return [currentData, dispatchData];
 };
 
 const saveArticle = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
-    getAllData();
   } catch (e) {
     console.log(e);
   }
 };
 
-import { AntDesign } from '@expo/vector-icons';
+// initData.forEach(({ name, ...rest }) => {
+// saveArticle(name, { name, ...rest });
+//});
 
 export default function KcalSection() {
+  const [currentData, dispatchData] = useAsynchStorage();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -63,6 +72,9 @@ export default function KcalSection() {
         <View style={styles.saveButton}>
           <TouchableWithoutFeedback
             onPress={() => {
+              currentData.forEach((data) => {
+                saveArticle(data.name, data);
+              });
               console.log('press');
             }}
           >
@@ -70,7 +82,7 @@ export default function KcalSection() {
           </TouchableWithoutFeedback>
         </View>
       </View>
-      <Table data={data} />
+      <Table data={currentData} dispatchData={dispatchData} />
     </View>
   );
 }
