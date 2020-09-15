@@ -89,19 +89,6 @@ const Table = ({ data, dispatchData }) => {
   );
 };
 
-const colorClamp = clamp(0, 255);
-// 0-600 grönt 600-900 gult 900-max rött
-
-const test = (value) => {
-  const max = 255;
-  let green = colorClamp(max + 600 - value);
-  let red = colorClamp((max / 600) * value);
-  const blue = 0;
-  console.log('value:', value);
-  console.log(`rgb(${red},${green},${blue})`);
-  return `rgb(${red},${green},${blue})`;
-};
-
 const getHalfWindowHeight = compose(divideByTwo, getWindowHeight);
 
 const styles = StyleSheet.create({

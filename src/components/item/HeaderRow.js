@@ -5,7 +5,7 @@ import { map } from 'ramda';
 
 const lineContent = ['Name', 'Kcal', 'g', 'TotalKcal'];
 
-const Line = (value) => (
+export const Line = (value) => (
   <Text key={shortid.generate()} style={styles.rowItem}>
     {value}
   </Text>

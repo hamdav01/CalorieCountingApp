@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "BrewingApp",
+    "name": "CalorieApp",
     "owner": "Hampus Davidsson",
-    "slug": "BrewingApp",
+    "slug": "CalorieApp",
     "platforms": ["ios", "android", "web"],
     "version": "0.1.0",
     "orientation": "portrait",
