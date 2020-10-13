@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React  from 'react';
 import {
   View,
   Text,
@@ -14,16 +14,13 @@ import {
   multiply,
   converge,
   sum,
-  divide,
-  __,
-  clamp,
 } from 'ramda';
 
 import HeaderRow from './HeaderRow';
 import Row from './Row';
 import { getWindowHeight } from '../../utils/Dimensions';
 import { divideByTwo, divideByHundred } from '../../utils/Math';
-import { productReducer, ProductActions } from '../../reducers/ProductReducer';
+import {  ProductActions } from '../../reducers/ProductReducer';
 
 const getGrams = prop('grams');
 const getKcal = prop('kcal');

@@ -1,4 +1,4 @@
-import { concat, findIndex, remove, eqProps, update, append } from 'ramda';
+import {  findIndex, remove, eqProps, update, append } from 'ramda';
 import shortid from 'shortid';
 
 export const ProductActions = {

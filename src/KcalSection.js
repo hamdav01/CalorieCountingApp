@@ -1,10 +1,5 @@
-import React, { useEffect, useState, useReducer } from 'react';
-import {
-  StyleSheet,
-  View,
-  StatusBar,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import React, { useReducer } from 'react';
+import { StyleSheet, View, StatusBar } from 'react-native';
 import Table from './components/item/Table';
 import Header from './components/header/Header.js';
 
